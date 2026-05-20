@@ -9,6 +9,12 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 };
 
+const emailConfig = {
+  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || "service_jcdhpdg",
+  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "template_sa09i5d",
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "PZ5HUs-K1qXjOM7RT",
+};
+
 function ContactPage() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -67,20 +73,23 @@ function ContactPage() {
     setSubmitStatus("");
 
     try {
-      const serviceId = "service_jcdhpdg";
-      const templateId = "template_sa09i5d";
-      const publicKey = "PZ5HUs-K1qXjOM7RT";
+      const templateParams = {
+        name: formData.fullName,
+        email: formData.email,
+        from_name: formData.fullName,
+        from_email: formData.email,
+        user_name: formData.fullName,
+        user_email: formData.email,
+        reply_to: formData.email,
+        to_email: profile.email,
+        message: formData.message,
+      };
 
       await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          from_name: formData.fullName,
-          from_email: formData.email,
-          to_email: profile.email,
-          message: formData.message,
-        },
-        publicKey
+        emailConfig.serviceId,
+        emailConfig.templateId,
+        templateParams,
+        emailConfig.publicKey
       );
 
       setSubmitStatus("success");
